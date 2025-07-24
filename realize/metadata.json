@@ -1,0 +1,5 @@
+{
+  "name": "realize",
+  "description": "A dynamic digital signage application for school staff rooms, displaying timetables, schedules, tasks, and more in an automated slideshow format.",
+  "requestFramePermissions": []
+}
