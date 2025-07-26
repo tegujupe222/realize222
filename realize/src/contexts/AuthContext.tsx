@@ -9,8 +9,12 @@ import { AuthenticatedUser } from '../types';
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 // Debug: 環境変数の値を確認
+console.log('=== 環境変数デバッグ ===');
 console.log('VITE_GOOGLE_CLIENT_ID:', import.meta.env.VITE_GOOGLE_CLIENT_ID);
+console.log('VITE_GOOGLE_CLIENT_ID type:', typeof import.meta.env.VITE_GOOGLE_CLIENT_ID);
+console.log('VITE_GOOGLE_CLIENT_ID length:', import.meta.env.VITE_GOOGLE_CLIENT_ID?.length);
 console.log('All env vars:', import.meta.env);
+console.log('=== デバッグ終了 ===');
 
 // Types for Google Identity Services to fix TypeScript errors
 interface CredentialResponse {
@@ -115,15 +119,30 @@ export const useAuth = () => {
 
 export const useGoogleSignIn = (ref: React.RefObject<HTMLDivElement>) => {
   useEffect(() => {
-      if (!GOOGLE_CLIENT_ID) return;
+      console.log('useGoogleSignIn: GOOGLE_CLIENT_ID =', GOOGLE_CLIENT_ID);
+      console.log('useGoogleSignIn: window.google =', window.google);
+      console.log('useGoogleSignIn: ref.current =', ref.current);
+      
+      if (!GOOGLE_CLIENT_ID) {
+          console.log('useGoogleSignIn: No GOOGLE_CLIENT_ID, returning');
+          return;
+      }
 
       if (ref.current && window.google?.accounts?.id) {
-          window.google.accounts.id.renderButton(
-              ref.current,
-              { theme: "outline", size: "large", type: "standard", text: "signin_with", shape: "pill" }
-          );
-          // Also show the One Tap prompt
-          window.google.accounts.id.prompt(); 
+          console.log('useGoogleSignIn: Rendering button...');
+          try {
+              window.google.accounts.id.renderButton(
+                  ref.current,
+                  { theme: "outline", size: "large", type: "standard", text: "signin_with", shape: "pill" }
+              );
+              // Also show the One Tap prompt
+              window.google.accounts.id.prompt(); 
+              console.log('useGoogleSignIn: Button rendered successfully');
+          } catch (error) {
+              console.error('useGoogleSignIn: Error rendering button:', error);
+          }
+      } else {
+          console.log('useGoogleSignIn: Missing ref.current or window.google.accounts.id');
       }
   }, [ref]);
 };
