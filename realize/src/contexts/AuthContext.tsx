@@ -8,13 +8,10 @@ import { AuthenticatedUser } from '../types';
 // ===================================================================================
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-// Debug: 環境変数の値を確認
-console.log('=== 環境変数デバッグ ===');
-console.log('VITE_GOOGLE_CLIENT_ID:', import.meta.env.VITE_GOOGLE_CLIENT_ID);
-console.log('VITE_GOOGLE_CLIENT_ID type:', typeof import.meta.env.VITE_GOOGLE_CLIENT_ID);
-console.log('VITE_GOOGLE_CLIENT_ID length:', import.meta.env.VITE_GOOGLE_CLIENT_ID?.length);
-console.log('All env vars:', import.meta.env);
-console.log('=== デバッグ終了 ===');
+// Debug: 環境変数の値を確認（開発時のみ）
+if (import.meta.env.DEV) {
+  console.log('VITE_GOOGLE_CLIENT_ID:', import.meta.env.VITE_GOOGLE_CLIENT_ID);
+}
 
 // Types for Google Identity Services to fix TypeScript errors
 interface CredentialResponse {
@@ -86,19 +83,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     
     if (window.google?.accounts?.id) {
-      console.log('AuthProvider: Initializing Google Sign-In...');
+      if (import.meta.env.DEV) {
+          console.log('AuthProvider: Initializing Google Sign-In...');
+      }
       try {
         window.google.accounts.id.initialize({
           client_id: GOOGLE_CLIENT_ID!,
           callback: handleCredentialResponse,
           auto_select: true,
         });
-        console.log('AuthProvider: Google Sign-In initialized successfully');
+        if (import.meta.env.DEV) {
+            console.log('AuthProvider: Google Sign-In initialized successfully');
+        }
       } catch (error) {
         console.error('AuthProvider: Error initializing Google Sign-In:', error);
       }
     } else {
-      console.log('AuthProvider: window.google.accounts.id not available yet');
+      if (import.meta.env.DEV) {
+          console.log('AuthProvider: window.google.accounts.id not available yet');
+      }
     }
   }, [handleCredentialResponse, isGoogleSignInConfigured]);
 
@@ -127,23 +130,30 @@ export const useAuth = () => {
 
 export const useGoogleSignIn = (ref: React.RefObject<HTMLDivElement>) => {
   useEffect(() => {
-      console.log('useGoogleSignIn: GOOGLE_CLIENT_ID =', GOOGLE_CLIENT_ID);
-      console.log('useGoogleSignIn: window.google =', window.google);
-      console.log('useGoogleSignIn: ref.current =', ref.current);
+      if (import.meta.env.DEV) {
+          console.log('useGoogleSignIn: GOOGLE_CLIENT_ID =', GOOGLE_CLIENT_ID);
+          console.log('useGoogleSignIn: window.google =', window.google);
+          console.log('useGoogleSignIn: ref.current =', ref.current);
+      }
       
       if (!GOOGLE_CLIENT_ID) {
-          console.log('useGoogleSignIn: No GOOGLE_CLIENT_ID, returning');
+          if (import.meta.env.DEV) {
+              console.log('useGoogleSignIn: No GOOGLE_CLIENT_ID, returning');
+          }
           return;
       }
 
       let timeoutId: number;
       let retryCount = 0;
       const maxRetries = 50; // 最大5秒間試行
+      let isRendered = false; // ボタンが既にレンダリングされているかチェック
 
       // initializeが完了するまで待つ
       const checkInitialized = () => {
-          if (ref.current && window.google?.accounts?.id) {
-              console.log('useGoogleSignIn: Rendering button...');
+          if (ref.current && window.google?.accounts?.id && !isRendered) {
+              if (import.meta.env.DEV) {
+                  console.log('useGoogleSignIn: Rendering button...');
+              }
               try {
                   // 既存のボタンをクリア
                   if (ref.current) {
@@ -154,17 +164,33 @@ export const useGoogleSignIn = (ref: React.RefObject<HTMLDivElement>) => {
                       ref.current,
                       { theme: "outline", size: "large", type: "standard", text: "signin_with", shape: "pill" }
                   );
-                  // Also show the One Tap prompt
-                  window.google.accounts.id.prompt(); 
-                  console.log('useGoogleSignIn: Button rendered successfully');
+                  isRendered = true;
+                  if (import.meta.env.DEV) {
+                      console.log('useGoogleSignIn: Button rendered successfully');
+                  }
+                  
+                  // One Tap promptは少し遅延させて表示
+                  setTimeout(() => {
+                      try {
+                          if (window.google?.accounts?.id) {
+                              window.google.accounts.id.prompt();
+                          }
+                      } catch (error) {
+                          if (import.meta.env.DEV) {
+                              console.log('useGoogleSignIn: One Tap prompt error (non-critical):', error);
+                          }
+                      }
+                  }, 1000);
               } catch (error) {
                   console.error('useGoogleSignIn: Error rendering button:', error);
               }
-          } else if (retryCount < maxRetries) {
-              console.log('useGoogleSignIn: Waiting for initialization...', retryCount);
+          } else if (retryCount < maxRetries && !isRendered) {
+              if (import.meta.env.DEV) {
+                  console.log('useGoogleSignIn: Waiting for initialization...', retryCount);
+              }
               retryCount++;
               timeoutId = setTimeout(checkInitialized, 100);
-          } else {
+          } else if (retryCount >= maxRetries) {
               console.error('useGoogleSignIn: Max retries reached, initialization failed');
           }
       };
@@ -179,7 +205,13 @@ export const useGoogleSignIn = (ref: React.RefObject<HTMLDivElement>) => {
           }
           // コンポーネントのアンマウント時にボタンをクリア
           if (ref.current) {
-              ref.current.innerHTML = '';
+              try {
+                  ref.current.innerHTML = '';
+              } catch (error) {
+                  if (import.meta.env.DEV) {
+                      console.log('useGoogleSignIn: Cleanup error (non-critical):', error);
+                  }
+              }
           }
       };
   }, [ref]);
