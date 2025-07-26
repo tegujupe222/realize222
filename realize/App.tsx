@@ -3,7 +3,6 @@ import Clock from './components/Clock';
 import Timetable from './components/Timetable';
 import WeeklySchedule from './components/WeeklySchedule';
 import TodoList from './components/TodoList';
-import AiQuote from './components/AiQuote';
 import Announcements from './components/Announcements';
 import DailyBriefing from './components/DailyBriefing';
 import AiChat from './components/AiChat';
@@ -66,7 +65,6 @@ const App: React.FC = () => {
     <Announcements key="announcements" announcements={announcements} />,
     <TodoList key="todolist" members={members} tasks={tasks} setTasks={setTasks} />,
     <WeeklySchedule key="schedule" events={scheduleEvents} />,
-    <AiQuote key="aiquote" />,
   ];
 
   const [ActiveSlide, activeIndex] = useSlideshow<React.ReactNode>(slides, SLIDE_INTERVAL_SECONDS);
