@@ -21,6 +21,13 @@ const LoginScreen: React.FC = () => {
                     続けるには、Googleアカウントでログインしてください。
                     これにより、アプリケーションの全機能が利用可能になります。
                 </p>
+                {/* デバッグ表示 */}
+                <div className="bg-yellow-900/60 border border-yellow-700/80 text-yellow-300 px-4 py-3 rounded-xl text-sm w-full mb-4">
+                    <p>isGoogleSignInConfigured: {String(isGoogleSignInConfigured)}</p>
+                    <p>GOOGLE_CLIENT_ID: {import.meta.env.VITE_GOOGLE_CLIENT_ID || 'undefined'}</p>
+                    <p>GOOGLE_CLIENT_ID length: {import.meta.env.VITE_GOOGLE_CLIENT_ID?.length || 0}</p>
+                </div>
+                
                 <div className="flex justify-center items-center min-h-[56px]">
                     {isGoogleSignInConfigured ? (
                         <div ref={googleButtonRef}></div>
