@@ -81,7 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     if (!isGoogleSignInConfigured) {
-      console.warn('Google Sign-In is not configured. Please set the `VITE_GOOGLE_CLIENT_ID` environment variable to enable login functionality.');
+      console.log('Google Sign-In is not configured. Please set the `VITE_GOOGLE_CLIENT_ID` environment variable to enable login functionality.');
       return;
     }
     
@@ -136,11 +136,20 @@ export const useGoogleSignIn = (ref: React.RefObject<HTMLDivElement>) => {
           return;
       }
 
+      let timeoutId: number;
+      let retryCount = 0;
+      const maxRetries = 50; // 最大5秒間試行
+
       // initializeが完了するまで待つ
       const checkInitialized = () => {
           if (ref.current && window.google?.accounts?.id) {
               console.log('useGoogleSignIn: Rendering button...');
               try {
+                  // 既存のボタンをクリア
+                  if (ref.current) {
+                      ref.current.innerHTML = '';
+                  }
+                  
                   window.google.accounts.id.renderButton(
                       ref.current,
                       { theme: "outline", size: "large", type: "standard", text: "signin_with", shape: "pill" }
@@ -151,14 +160,27 @@ export const useGoogleSignIn = (ref: React.RefObject<HTMLDivElement>) => {
               } catch (error) {
                   console.error('useGoogleSignIn: Error rendering button:', error);
               }
+          } else if (retryCount < maxRetries) {
+              console.log('useGoogleSignIn: Waiting for initialization...', retryCount);
+              retryCount++;
+              timeoutId = setTimeout(checkInitialized, 100);
           } else {
-              console.log('useGoogleSignIn: Waiting for initialization...');
-              // 少し待ってから再試行
-              setTimeout(checkInitialized, 100);
+              console.error('useGoogleSignIn: Max retries reached, initialization failed');
           }
       };
 
       // 少し遅延させてから初期化チェックを開始
-      setTimeout(checkInitialized, 500);
+      timeoutId = setTimeout(checkInitialized, 500);
+
+      // クリーンアップ関数
+      return () => {
+          if (timeoutId) {
+              clearTimeout(timeoutId);
+          }
+          // コンポーネントのアンマウント時にボタンをクリア
+          if (ref.current) {
+              ref.current.innerHTML = '';
+          }
+      };
   }, [ref]);
 };
