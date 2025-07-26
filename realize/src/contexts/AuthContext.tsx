@@ -6,7 +6,7 @@ import { AuthenticatedUser } from '../types';
 // IMPORTANT: The Google Client ID must be provided as an environment variable
 // named VITE_GOOGLE_CLIENT_ID in your Vercel project settings.
 // ===================================================================================
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '356321850941-jn72or97g9a1upv1rgfq26l1qdr4jv4e.apps.googleusercontent.com';
 
 // Debug: 環境変数の値を確認（開発時のみ）
 if (import.meta.env.DEV) {
@@ -86,7 +86,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       try {
         window.google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID!,
+          client_id: GOOGLE_CLIENT_ID,
           callback: handleCredentialResponse,
           auto_select: true,
         });
@@ -156,7 +156,6 @@ export const useGoogleSignIn = (ref: React.RefObject<HTMLDivElement>) => {
                   window.google.accounts.id.renderButton(
                       ref.current,
                       { 
-                          client_id: GOOGLE_CLIENT_ID || '356321850941-jn72or97g9a1upv1rgfq26l1qdr4jv4e.apps.googleusercontent.com',
                           theme: "outline", 
                           size: "large", 
                           type: "standard", 

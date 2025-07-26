@@ -8,7 +8,7 @@ import { AuthenticatedUser } from '../types';
 // You can get a client ID from the Google Cloud Console:
 // https://console.cloud.google.com/apis/credentials
 // ===================================================================================
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_ID = (import.meta as any).env?.VITE_GOOGLE_CLIENT_ID || '356321850941-jn72or97g9a1upv1rgfq26l1qdr4jv4e.apps.googleusercontent.com';
 
 // Types for Google Identity Services to fix TypeScript errors
 interface CredentialResponse {
@@ -80,7 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     if (window.google?.accounts?.id) {
       window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID!,
+        client_id: GOOGLE_CLIENT_ID,
         callback: handleCredentialResponse,
         auto_select: true,
       });
