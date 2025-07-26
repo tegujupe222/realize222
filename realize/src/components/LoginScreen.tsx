@@ -1,10 +1,8 @@
 import React, { useRef } from 'react';
 import { useAuth, useGoogleSignIn } from '../contexts/AuthContext';
-import AlertTriangleIcon from './icons/AlertTriangleIcon';
 
 const LoginScreen: React.FC = () => {
     const googleButtonRef = useRef<HTMLDivElement>(null);
-    const { isGoogleSignInConfigured } = useAuth();
     useGoogleSignIn(googleButtonRef);
 
     return (

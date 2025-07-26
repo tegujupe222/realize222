@@ -42,7 +42,6 @@ declare global {
 interface AuthContextType {
   user: AuthenticatedUser | null;
   logout: () => void;
-  isGoogleSignInConfigured: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -113,7 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, logout, isGoogleSignInConfigured }}>
+    <AuthContext.Provider value={{ user, logout }}>
       {children}
     </AuthContext.Provider>
   );
