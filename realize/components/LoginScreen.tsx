@@ -1,8 +1,10 @@
 import React, { useRef } from 'react';
-import { useGoogleSignIn } from '../contexts/AuthContext';
+import { useGoogleSignIn, useCustomGoogleLogin } from '../contexts/AuthContext';
+import GoogleLoginButton from './GoogleLoginButton';
 
 const LoginScreen: React.FC = () => {
     const googleButtonRef = useRef<HTMLDivElement>(null);
+    const { handleCustomLogin, isLoading } = useCustomGoogleLogin();
     useGoogleSignIn(googleButtonRef);
 
     return (
@@ -19,8 +21,15 @@ const LoginScreen: React.FC = () => {
                     続けるには、Googleアカウントでログインしてください。
                     これにより、アプリケーションの全機能が利用可能になります。
                 </p>
-                <div className="flex justify-center items-center min-h-[56px]">
+                <div className="flex flex-col items-center gap-4 min-h-[56px]">
+                    {/* Google公式ボタン */}
                     <div ref={googleButtonRef}></div>
+                    
+                    {/* カスタムボタン（フォールバック） */}
+                    <GoogleLoginButton 
+                        onClick={handleCustomLogin}
+                        isLoading={isLoading}
+                    />
                 </div>
             </div>
         </main>
