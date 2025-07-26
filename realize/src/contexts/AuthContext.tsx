@@ -8,6 +8,10 @@ import { AuthenticatedUser } from '../types';
 // ===================================================================================
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
+// Debug: 環境変数の値を確認
+console.log('VITE_GOOGLE_CLIENT_ID:', import.meta.env.VITE_GOOGLE_CLIENT_ID);
+console.log('All env vars:', import.meta.env);
+
 // Types for Google Identity Services to fix TypeScript errors
 interface CredentialResponse {
   credential: string;
