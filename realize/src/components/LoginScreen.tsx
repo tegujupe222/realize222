@@ -21,27 +21,8 @@ const LoginScreen: React.FC = () => {
                     続けるには、Googleアカウントでログインしてください。
                     これにより、アプリケーションの全機能が利用可能になります。
                 </p>
-                {/* デバッグ表示 */}
-                <div className="bg-yellow-900/60 border border-yellow-700/80 text-yellow-300 px-4 py-3 rounded-xl text-sm w-full mb-4">
-                    <p>isGoogleSignInConfigured: {String(isGoogleSignInConfigured)}</p>
-                    <p>GOOGLE_CLIENT_ID: {import.meta.env.VITE_GOOGLE_CLIENT_ID || 'undefined'}</p>
-                    <p>GOOGLE_CLIENT_ID length: {import.meta.env.VITE_GOOGLE_CLIENT_ID?.length || 0}</p>
-                </div>
-                
                 <div className="flex justify-center items-center min-h-[56px]">
-                    {isGoogleSignInConfigured ? (
-                        <div ref={googleButtonRef}></div>
-                    ) : (
-                        <div className="bg-red-900/60 border border-red-700/80 text-red-300 px-4 py-3 rounded-xl text-sm w-full flex items-start gap-3">
-                           <AlertTriangleIcon className="w-5 h-5 mt-0.5 flex-shrink-0 text-red-400" />
-                           <div>
-                             <h3 className="font-bold text-red-200">ログイン機能が設定されていません</h3>
-                             <p className="text-xs text-red-400 mt-1">
-                                管理者は `VITE_GOOGLE_CLIENT_ID` 環境変数を設定する必要があります。
-                             </p>
-                           </div>
-                        </div>
-                    )}
+                    <div ref={googleButtonRef}></div>
                 </div>
             </div>
         </main>

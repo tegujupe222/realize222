@@ -78,7 +78,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     if (!isGoogleSignInConfigured) {
-      console.log('Google Sign-In is not configured. Please set the `VITE_GOOGLE_CLIENT_ID` environment variable to enable login functionality.');
       return;
     }
     
