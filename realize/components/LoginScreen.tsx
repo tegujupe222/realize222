@@ -1,10 +1,8 @@
 import React, { useRef } from 'react';
-import { useAuth, useGoogleSignIn } from '../contexts/AuthContext';
-import AlertTriangleIcon from './icons/AlertTriangleIcon';
+import { useGoogleSignIn } from '../contexts/AuthContext';
 
 const LoginScreen: React.FC = () => {
     const googleButtonRef = useRef<HTMLDivElement>(null);
-    const { isGoogleSignInConfigured } = useAuth();
     useGoogleSignIn(googleButtonRef);
 
     return (
@@ -22,19 +20,7 @@ const LoginScreen: React.FC = () => {
                     これにより、アプリケーションの全機能が利用可能になります。
                 </p>
                 <div className="flex justify-center items-center min-h-[56px]">
-                    {isGoogleSignInConfigured ? (
-                        <div ref={googleButtonRef}></div>
-                    ) : (
-                        <div className="bg-red-900/60 border border-red-700/80 text-red-300 px-4 py-3 rounded-xl text-sm w-full flex items-start gap-3">
-                           <AlertTriangleIcon className="w-5 h-5 mt-0.5 flex-shrink-0 text-red-400" />
-                           <div>
-                             <h3 className="font-bold text-red-200">ログイン機能が設定されていません</h3>
-                             <p className="text-xs text-red-400 mt-1">
-                                管理者は `GOOGLE_CLIENT_ID` 環境変数を設定する必要があります。
-                             </p>
-                           </div>
-                        </div>
-                    )}
+                    <div ref={googleButtonRef}></div>
                 </div>
             </div>
         </main>

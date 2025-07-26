@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useAuth, useGoogleSignIn } from '../contexts/AuthContext';
+import { useGoogleSignIn } from '../contexts/AuthContext';
 
 const LoginScreen: React.FC = () => {
     const googleButtonRef = useRef<HTMLDivElement>(null);

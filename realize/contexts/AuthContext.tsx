@@ -39,14 +39,13 @@ declare global {
 interface AuthContextType {
   user: AuthenticatedUser | null;
   logout: () => void;
-  isGoogleSignInConfigured: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthenticatedUser | null>(null);
-  const isGoogleSignInConfigured = !!GOOGLE_CLIENT_ID;
+  const isGoogleSignInConfigured = true; // 常にtrueにしてGoogleログインボタンを表示
 
   const handleCredentialResponse = useCallback((response: CredentialResponse) => {
     try {
@@ -97,7 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, logout, isGoogleSignInConfigured }}>
+    <AuthContext.Provider value={{ user, logout }}>
       {children}
     </AuthContext.Provider>
   );
