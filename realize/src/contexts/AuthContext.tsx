@@ -86,11 +86,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     
     if (window.google?.accounts?.id) {
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID!,
-        callback: handleCredentialResponse,
-        auto_select: true,
-      });
+      console.log('AuthProvider: Initializing Google Sign-In...');
+      try {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID!,
+          callback: handleCredentialResponse,
+          auto_select: true,
+        });
+        console.log('AuthProvider: Google Sign-In initialized successfully');
+      } catch (error) {
+        console.error('AuthProvider: Error initializing Google Sign-In:', error);
+      }
+    } else {
+      console.log('AuthProvider: window.google.accounts.id not available yet');
     }
   }, [handleCredentialResponse, isGoogleSignInConfigured]);
 
@@ -128,21 +136,29 @@ export const useGoogleSignIn = (ref: React.RefObject<HTMLDivElement>) => {
           return;
       }
 
-      if (ref.current && window.google?.accounts?.id) {
-          console.log('useGoogleSignIn: Rendering button...');
-          try {
-              window.google.accounts.id.renderButton(
-                  ref.current,
-                  { theme: "outline", size: "large", type: "standard", text: "signin_with", shape: "pill" }
-              );
-              // Also show the One Tap prompt
-              window.google.accounts.id.prompt(); 
-              console.log('useGoogleSignIn: Button rendered successfully');
-          } catch (error) {
-              console.error('useGoogleSignIn: Error rendering button:', error);
+      // initializeが完了するまで待つ
+      const checkInitialized = () => {
+          if (ref.current && window.google?.accounts?.id) {
+              console.log('useGoogleSignIn: Rendering button...');
+              try {
+                  window.google.accounts.id.renderButton(
+                      ref.current,
+                      { theme: "outline", size: "large", type: "standard", text: "signin_with", shape: "pill" }
+                  );
+                  // Also show the One Tap prompt
+                  window.google.accounts.id.prompt(); 
+                  console.log('useGoogleSignIn: Button rendered successfully');
+              } catch (error) {
+                  console.error('useGoogleSignIn: Error rendering button:', error);
+              }
+          } else {
+              console.log('useGoogleSignIn: Waiting for initialization...');
+              // 少し待ってから再試行
+              setTimeout(checkInitialized, 100);
           }
-      } else {
-          console.log('useGoogleSignIn: Missing ref.current or window.google.accounts.id');
-      }
+      };
+
+      // 少し遅延させてから初期化チェックを開始
+      setTimeout(checkInitialized, 500);
   }, [ref]);
 };
