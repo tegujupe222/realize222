@@ -7,16 +7,6 @@ import EditIcon from './icons/EditIcon';
 import Modal from './Modal';
 import CheckIcon from './icons/CheckIcon';
 import UploadCloudIcon from './icons/UploadCloudIcon';
-import { parseTimetableFromPdfText } from '../services/geminiService';
-// pdfjs-distは動的importで読み込むことで型エラーを回避
-let pdfjsLib: any;
-import('pdfjs-dist').then((lib) => {
-  pdfjsLib = lib;
-  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/build/pdf.worker.min.mjs',
-    import.meta.url,
-  ).toString();
-});
 
 type SettingsProps = {
   setView: (view: 'dashboard' | 'settings') => void;
@@ -146,23 +136,15 @@ const Settings: React.FC<SettingsProps> = (props) => {
   const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    
     setIsParsing(true);
     setParseError(null);
     try {
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-        let fullText = '';
-        for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const textContent = await page.getTextContent();
-            fullText += textContent.items.map(item => ('str' in item ? item.str : '')).join(' ');
+        // PDF解析機能を無効化
+        setParseError("PDF解析機能は現在利用できません。");
+        setIsParsing(false);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
         }
-        
-        const parsedTimetable = await parseTimetableFromPdfText(fullText);
-        
-        setTimetables(prev => prev.map(entry => entry.memberId === selectedTimetableMemberId ? { ...entry, timetable: parsedTimetable } : entry));
-
     } catch (error) {
         console.error("PDF Parsing failed:", error);
         setParseError(error instanceof Error ? error.message : "An unknown error occurred during PDF parsing.");
