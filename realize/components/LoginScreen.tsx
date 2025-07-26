@@ -1,10 +1,8 @@
 import React, { useRef } from 'react';
-import { useGoogleSignIn, useCustomGoogleLogin } from '../contexts/AuthContext';
-import GoogleLoginButton from './GoogleLoginButton';
+import { useGoogleSignIn } from '../contexts/AuthContext';
 
 const LoginScreen: React.FC = () => {
     const googleButtonRef = useRef<HTMLDivElement>(null);
-    const { handleCustomLogin, isLoading } = useCustomGoogleLogin();
     useGoogleSignIn(googleButtonRef);
 
     return (
@@ -24,12 +22,6 @@ const LoginScreen: React.FC = () => {
                 <div className="flex flex-col items-center gap-4 min-h-[56px]">
                     {/* Google公式ボタン */}
                     <div ref={googleButtonRef}></div>
-                    
-                    {/* カスタムボタン（フォールバック） */}
-                    <GoogleLoginButton 
-                        onClick={handleCustomLogin}
-                        isLoading={isLoading}
-                    />
                 </div>
             </div>
         </main>

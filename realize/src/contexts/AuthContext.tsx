@@ -216,29 +216,4 @@ export const useGoogleSignIn = (ref: React.RefObject<HTMLDivElement>) => {
   }, [ref]);
 };
 
-// カスタムログイン機能を追加
-export const useCustomGoogleLogin = () => {
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleCustomLogin = useCallback(() => {
-    if (!window.google?.accounts?.id) {
-      console.error('Google Identity Services not available');
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      window.google.accounts.id.prompt((notification) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          console.log('One Tap prompt not displayed or skipped');
-          setIsLoading(false);
-        }
-      });
-    } catch (error) {
-      console.error('Error triggering Google login:', error);
-      setIsLoading(false);
-    }
-  }, []);
-
-  return { handleCustomLogin, isLoading };
-};
