@@ -49,7 +49,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthenticatedUser | null>(null);
-  const isGoogleSignInConfigured = !!GOOGLE_CLIENT_ID;
+  const isGoogleSignInConfigured = true; // 常にtrueにしてGoogleログインボタンを表示
 
   const handleCredentialResponse = useCallback((response: CredentialResponse) => {
     try {
@@ -135,12 +135,7 @@ export const useGoogleSignIn = (ref: React.RefObject<HTMLDivElement>) => {
           console.log('useGoogleSignIn: ref.current =', ref.current);
       }
       
-      if (!GOOGLE_CLIENT_ID) {
-          if (import.meta.env.DEV) {
-              console.log('useGoogleSignIn: No GOOGLE_CLIENT_ID, returning');
-          }
-          return;
-      }
+      // GOOGLE_CLIENT_IDのチェックを削除して常にボタンレンダリングを試行
 
       let timeoutId: number;
       let retryCount = 0;
@@ -161,7 +156,14 @@ export const useGoogleSignIn = (ref: React.RefObject<HTMLDivElement>) => {
                   
                   window.google.accounts.id.renderButton(
                       ref.current,
-                      { theme: "outline", size: "large", type: "standard", text: "signin_with", shape: "pill" }
+                      { 
+                          client_id: GOOGLE_CLIENT_ID || '356321850941-jn72or97g9a1upv1rgfq26l1qdr4jv4e.apps.googleusercontent.com',
+                          theme: "outline", 
+                          size: "large", 
+                          type: "standard", 
+                          text: "signin_with", 
+                          shape: "pill" 
+                      }
                   );
                   isRendered = true;
                   if (import.meta.env.DEV) {
