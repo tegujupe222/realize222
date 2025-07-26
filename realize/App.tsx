@@ -5,7 +5,6 @@ import WeeklySchedule from './components/WeeklySchedule';
 import TodoList from './components/TodoList';
 import Announcements from './components/Announcements';
 import DailyBriefing from './components/DailyBriefing';
-import AiChat from './components/AiChat';
 import Settings from './components/Settings';
 import LoginScreen from './components/LoginScreen';
 import { useSlideshow } from './hooks/useSlideshow';
@@ -61,7 +60,6 @@ const App: React.FC = () => {
   const slides = [
     <DailyBriefing key="briefing" tasks={tasks} events={scheduleEvents} announcements={announcements} />,
     <Timetable key="timetable" timetables={timetables} members={members} />,
-    <AiChat key="aichat" members={members} tasks={tasks} timetables={timetables} events={scheduleEvents} announcements={announcements} />,
     <Announcements key="announcements" announcements={announcements} />,
     <TodoList key="todolist" members={members} tasks={tasks} setTasks={setTasks} />,
     <WeeklySchedule key="schedule" events={scheduleEvents} />,
